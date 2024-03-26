@@ -1,6 +1,7 @@
 # Activité 4 SR05
 
 ## Objectif
+
 Travail de programmation
 Le but de cette activité est de faire le lien entre l'écriture des algorithmes et leur programmation.
 
@@ -26,3 +27,13 @@ Travail demandé : réaliser un programme dans le langage de votre choix tel que
     - répéter un grand nombre de fois
       - écrire sur stderr "."
       - attendre 10 secondes
+
+## Rendu
+
+Les deux fonctions principales du programme (`emit_message` et `receive_message`) sont séquentielles par construction. Chaque fonction consiste en une boucle infinie qui effectue une action qui doit être atomique.
+
+`emit_message` est lancée en arrière-plan et écrit un message sur la sortie standard toutes les secondes. `receive_message` est lancée sur le processus principal et lit la sortie standard. Si un message est reçu, il est affiché sur la sortie d'erreur standard dès que `emit_message` a fini son tour de boucle.
+
+Leurs actions sont atomique grâce à l'utilisation de `flock` qui permet de générer un verrou. Chaque fonction consiste en une boucle infinie qui attend un verrou sur un fichier temporaire à chaque tour de boucle. Une fois le verrou obtenu, la fonction effectue son action et libère le verrou.
+
+L'atomicité de c'est deux fonctions permet d'avoir un programme séquentiel même si ces deux fonctions sont appelées sur deux processus différents.
