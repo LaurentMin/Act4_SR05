@@ -7,6 +7,9 @@ if [ ! -d "$lock_dir" ]; then
     mkdir "$lock_dir"
 fi
 
+echo -n "Message à afficher périodiquement: "
+read -r message
+
 # Fonction pour écrire un message périodiquement sur la sortie standard
 emit_message() {
     while true; do
@@ -15,7 +18,7 @@ emit_message() {
             flock 200 || exit 1
             # Test d'atomicité
             atomic_test "Emission"
-            echo "Message périodique" 
+            echo "$message" 
         ) 200>"$lock_dir/lockfile"
         
         sleep 5  # Émission toutes les 5 secondes, à titre d'exemple
@@ -32,12 +35,12 @@ receive_message() {
             # Test d'atomicité
             atomic_test "Réception"
             if [ -n "$input" ]; then
-                if [ -z "$DISPLAY" ] || true; then
+                if [ -z "$DISPLAY" ] || ! command -v zenity > /dev/null; then
                     # Si pas d'interface graphique, afficher sur la sortie erreur standard
                     >&2 echo "Réception de $input"
                 else
                     # Si une interface graphique est disponible, afficher dans une boîte de dialogue par exemple
-                    zenity --info --text="Réception de $input"
+                    zenity --info --text="Réception de $input" --timeout=10 &
                 fi
             fi
         ) 200>"$lock_dir/lockfile"
