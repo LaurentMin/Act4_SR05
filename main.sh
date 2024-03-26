@@ -21,7 +21,7 @@ emit_message() {
             echo "$message" 
         ) 200>"$lock_dir/lockfile"
         
-        sleep 5  # Émission toutes les 5 secondes, à titre d'exemple
+        sleep 5  # Émission toutes les 5 secondes
     done
 }
 
@@ -40,7 +40,7 @@ receive_message() {
                     >&2 echo "Réception de $input"
                 else
                     # Si une interface graphique est disponible, afficher dans une boîte de dialogue par exemple
-                    zenity --info --text="Réception de $input" --timeout=10 &
+                    zenity --info --text="Réception de $input" --timeout=5
                 fi
             fi
         ) 200>"$lock_dir/lockfile"
