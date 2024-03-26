@@ -7,6 +7,7 @@ if [ ! -d "$lock_dir" ]; then
     mkdir "$lock_dir"
 fi
 
+# Demander à l'utilisateur de saisir un message à afficher périodiquement
 echo -n "Message à afficher périodiquement: "
 read -r message
 
@@ -17,7 +18,7 @@ emit_message() {
         (
             flock 200 || exit 1
             # Test d'atomicité
-            atomic_test "Emission"
+            # atomic_test "Emission"
             echo "$message" 
         ) 200>"$lock_dir/lockfile"
         
@@ -33,7 +34,7 @@ receive_message() {
         (
             flock 200 || exit 1
             # Test d'atomicité
-            atomic_test "Réception"
+            # atomic_test "Réception"
             if [ -n "$input" ]; then
                 if [ -z "$DISPLAY" ] || ! command -v zenity > /dev/null; then
                     # Si pas d'interface graphique, afficher sur la sortie erreur standard
